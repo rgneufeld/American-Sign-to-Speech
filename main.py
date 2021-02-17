@@ -63,9 +63,6 @@ class Application:
             imgtk = ImageTk.PhotoImage(image=self.current_image2)
             self.aslPanel.imgtk = imgtk
             self.aslPanel.config(image=imgtk)
-            #self.letterPanel.config(text=self.current_symbol, font=("Courier", 50))
-            ##self.panel4.config(text=self.word, font=("Courier", 40))
-            ##self.panel5.config(text=self.str, font=("Courier", 40))
         self.root.after(30, self.video_loop)
 
     def destructor(self):

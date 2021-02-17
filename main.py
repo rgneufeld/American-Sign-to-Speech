@@ -11,7 +11,6 @@ from tkinter import Tk
 
 # from keras.models import model_from_json
 
-
 class Application:
     def __init__(self):
         self.camera = cv.VideoCapture(0)

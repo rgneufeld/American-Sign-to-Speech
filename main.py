@@ -1,21 +1,14 @@
-from __future__ import print_function
+# Import all the Required modules
+
 from PIL import Image, ImageTk
 import pyttsx3
 import tkinter as tk
-import PIL as pl
-import numpy as np
 import cv2
 from keras.models import model_from_json
 import operator
-import time
-import sys, os
-import argparse
-import matplotlib.pyplot as pl
-from tkinter import Tk
-import hunspell 
 from string import ascii_uppercase
 
-
+# Create the main class of the application
 class Application:
     def __init__(self):
 	   
@@ -25,8 +18,7 @@ class Application:
         self.voices = self.engine.getProperty("voices")    # Get all the available voices 
         self.engine.setProperty("voice",self.voices[1].id)
         
-
-        self.hs = hunspell.HunSpell('/usr/share/hunspell/en_US.dic', '/usr/share/hunspell/en_US.aff')
+        # To get the access to the camera and get frames
         self.vs = cv2.VideoCapture(0)
         self.current_image = None
         self.current_image2 = None
@@ -60,7 +52,7 @@ class Application:
         self.loaded_model_smn.load_weights(self.directory+"\model-bw_smn.h5")
         
         self.ct = {}
-        self.ct['blank'] = 0
+        self.ct['Blank'] = 0
         self.blank_flag = 0
 
         # Here "i" represent each character from A-Z. and set 0 to each unit of the ct array
@@ -68,9 +60,10 @@ class Application:
           self.ct[i] = 0
 
         self.root = tk.Tk()
-        self.root.title("Sign language to Text Converter")
+        self.root.title("American-Sign-to-Speech")
         self.root.protocol('WM_DELETE_WINDOW', self.destructor)
         self.root.geometry("800x800")                           # Set the intital size of the window
+        
 
         self.panel = tk.Label(self.root)                        # give the location of the colored screen window
         self.panel.place(x = 135, y = 10, width = 640, height = 640)
@@ -83,34 +76,13 @@ class Application:
         self.T.config(text = "American-Sign-to-Speech",font=("courier",40,"bold"))
 
         self.panel3 = tk.Label(self.root)                       # set the location of the predictive symmol/ Character value
-        self.panel3.place(x = 1200,y=50)
+        self.panel3.place(x = 450,y=610)
         
         self.T1 = tk.Label(self.root)                           # set the location of the character TEXT in the window
-        self.T1.place(x = 780,y = 50)
+        self.T1.place(x = 30,y = 610)
         self.T1.config(text="Character :",font=("Courier",40,"bold"))
 
-        self.panel4 = tk.Label(self.root)                       # word vaule 
-        self.panel4.place(x = 1200,y=100)
-        
-        self.T2 = tk.Label(self.root)                           # "Word" represent on the interface
-        self.T2.place(x = 780,y = 100)
-        self.T2.config(text ="Word :",font=("Courier",40,"bold"))
-
-        self.panel5 = tk.Label(self.root)                       # Sentence value
-        self.panel5.place(x = 1200,y=150)
-        
-        self.T3 = tk.Label(self.root)                           # "Sentence" represent on teh interface
-        self.T3.place(x = 780,y = 150)
-        self.T3.config(text ="Sentence :",font=("Courier",40,"bold"))
-
-        self.T4 = tk.Label(self.root)                           # Suggestions
-        self.T4.place(x = 780,y = 200)
-        self.T4.config(text = "Suggestions",fg="red",font = ("Courier",40,"bold"))
-
-
-        # Here are some varaibles, 
-        self.str="" 
-        self.word=""
+        # Create Following varialbes and intialize them as empty variables
         self.current_symbol="Empty"
         self.photo="Empty"
 
@@ -169,34 +141,7 @@ class Application:
             self.panel2.imgtk = imgtk
             self.panel2.config(image=imgtk)
             self.panel3.config(text=self.current_symbol,font=("Courier",50))    # Current Symbol
-            self.panel4.config(text=self.word,font=("Courier",40))              # Word Predicted
-            self.panel5.config(text=self.str,font=("Courier",40))               # Whole Sentence
-
-
-            # ##############################################
-            # This is what we need to make it running, to get the word data
-            """predicts=self.hs.suggest(self.word)
-
-            if(len(predicts) > 0):
-                self.bt1.config(text=predicts[0],font = ("Courier",20))
-            else:
-                self.bt1.config(text="")
-            if(len(predicts) > 1):
-                self.bt2.config(text=predicts[1],font = ("Courier",20))
-            else:
-                self.bt2.config(text="")
-            if(len(predicts) > 2):
-                self.bt3.config(text=predicts[2],font = ("Courier",20))
-            else:
-                self.bt3.config(text="")
-            if(len(predicts) > 3):
-                self.bt4.config(text=predicts[3],font = ("Courier",20))
-            else:
-                self.bt4.config(text="")
-            if(len(predicts) > 4):
-                self.bt4.config(text=predicts[4],font = ("Courier",20))
-            else:
-                self.bt4.config(text="") """      
+            
 
         self.root.after(30, self.video_loop)
 
@@ -217,17 +162,19 @@ class Application:
         result_smn = self.loaded_model_smn.predict(test_image.reshape(1 , 128 , 128 , 1))
 
         prediction={}
-        prediction['blank'] = result[0][0]
+        prediction['Blank'] = result[0][0]
         inde = 1
         for i in ascii_uppercase:
             prediction[i] = result[0][inde]
             inde += 1
 
-        #LAYER 1
+        #LAYER 1: IT covers all characters from A-Z
         prediction = sorted(prediction.items(), key=operator.itemgetter(1), reverse=True)
         self.current_symbol = prediction[0][0]
 
-        #LAYER 2
+        #LAYER 2 start from here 
+
+        # For a group of character, which includes D, R, and U.
         if(self.current_symbol == 'D' or self.current_symbol == 'R' or self.current_symbol == 'U'):
         	prediction = {}
         	prediction['D'] = result_dru[0][0]
@@ -236,6 +183,7 @@ class Application:
         	prediction = sorted(prediction.items(), key=operator.itemgetter(1), reverse=True)
         	self.current_symbol = prediction[0][0]
 
+        # For a group of character, which includes D, I, k,and T.
         if(self.current_symbol == 'D' or self.current_symbol == 'I' or self.current_symbol == 'K' or self.current_symbol == 'T'):
         	prediction = {}
         	prediction['D'] = result_tkdi[0][0]
@@ -244,7 +192,8 @@ class Application:
         	prediction['T'] = result_tkdi[0][3]
         	prediction = sorted(prediction.items(), key=operator.itemgetter(1), reverse=True)
         	self.current_symbol = prediction[0][0]
-
+        
+        # For a group of character, which includes M, N, and S.
         if(self.current_symbol == 'M' or self.current_symbol == 'N' or self.current_symbol == 'S'):
         	prediction1 = {}
         	prediction1['M'] = result_smn[0][0]
@@ -255,8 +204,9 @@ class Application:
         		self.current_symbol = prediction1[0][0]
         	else:
         		self.current_symbol = prediction[0][0]
-
-        if(self.current_symbol == 'blank'):
+        
+        # If there is nothing in the screen, then it is "Blank"
+        if(self.current_symbol == 'Blank'):
             for i in ascii_uppercase:
                 self.ct[i] = 0
         self.ct[self.current_symbol] += 1
@@ -268,14 +218,14 @@ class Application:
                 if tmp < 0:
                     tmp *= -1
                 if tmp <= 20:
-                    self.ct['blank'] = 0
+                    self.ct['Blank'] = 0
                     for i in ascii_uppercase:
                         self.ct[i] = 0
                     return
-            self.ct['blank'] = 0
+            self.ct['Blank'] = 0
             for i in ascii_uppercase:
                 self.ct[i] = 0
-            if self.current_symbol == 'blank':
+            if self.current_symbol == 'Blank':
                 if self.blank_flag == 0:
                     self.blank_flag = 1
                     if len(self.str) > 0:
@@ -288,47 +238,8 @@ class Application:
                 self.blank_flag = 0
                 self.word += self.current_symbol
 
-            
-        print(self.current_symbol, self.word)
-
         self.engine.say(self.current_symbol)
         self.engine.runAndWait()
-        
-            
-
-
-    # ####################################################
-    # This is where the prediction of the "Word" take place
-    """def action1(self):
-    	predicts=self.hs.suggest(self.word)
-    	if(len(predicts) > 0):
-            self.word=""
-            self.str+=" "
-            self.str+=predicts[0]
-    def action2(self):
-    	predicts=self.hs.suggest(self.word)
-    	if(len(predicts) > 1):
-            self.word=""
-            self.str+=" "
-            self.str+=predicts[1]
-    def action3(self):
-    	predicts=self.hs.suggest(self.word)
-    	if(len(predicts) > 2):
-            self.word=""
-            self.str+=" "
-            self.str+=predicts[2]
-    def action4(self):
-    	predicts=self.hs.suggest(self.word)
-    	if(len(predicts) > 3):
-            self.word=""
-            self.str+=" "
-            self.str+=predicts[3]
-    def action5(self):
-    	predicts=self.hs.suggest(self.word)
-    	if(len(predicts) > 4):
-            self.word=""
-            self.str+=" "
-            self.str+=predicts[4]"""
 
     # Destroy the window
     def destructor(self):

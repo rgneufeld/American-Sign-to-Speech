@@ -14,7 +14,6 @@ import matplotlib.pyplot as pl
 from tkinter import Tk
 import hunspell 
 from string import ascii_uppercase
-# from keras.models import model_from_json
 
 
 class Application:
@@ -27,7 +26,7 @@ class Application:
         self.engine.setProperty("voice",self.voices[1].id)
         
 
-        #self.hs = hunspell.HunSpell('/usr/share/hunspell/en_US.dic', '/usr/share/hunspell/en_US.aff')
+        self.hs = hunspell.HunSpell('/usr/share/hunspell/en_US.dic', '/usr/share/hunspell/en_US.aff')
         self.vs = cv2.VideoCapture(0)
         self.current_image = None
         self.current_image2 = None
@@ -81,31 +80,31 @@ class Application:
         
         self.T = tk.Label(self.root)                            # location of the main title of the application
         self.T.place(x=31,y = 17)
-        self.T.config(text = "Sign Language to Text",font=("courier",40,"bold"))
+        self.T.config(text = "American-Sign-to-Speech",font=("courier",40,"bold"))
 
         self.panel3 = tk.Label(self.root)                       # set the location of the predictive symmol/ Character value
-        self.panel3.place(x = 500,y=640)
+        self.panel3.place(x = 1200,y=50)
         
         self.T1 = tk.Label(self.root)                           # set the location of the character TEXT in the window
-        self.T1.place(x = 10,y = 640)
+        self.T1.place(x = 780,y = 50)
         self.T1.config(text="Character :",font=("Courier",40,"bold"))
 
         self.panel4 = tk.Label(self.root)                       # word vaule 
-        self.panel4.place(x = 220,y=10)
+        self.panel4.place(x = 1200,y=100)
         
-        self.T2 = tk.Label(self.root)                           # "Work" represent on the interface
-        self.T2.place(x = 10,y = 10)
+        self.T2 = tk.Label(self.root)                           # "Word" represent on the interface
+        self.T2.place(x = 780,y = 100)
         self.T2.config(text ="Word :",font=("Courier",40,"bold"))
 
         self.panel5 = tk.Label(self.root)                       # Sentence value
-        self.panel5.place(x = 10,y=760)
+        self.panel5.place(x = 1200,y=150)
         
         self.T3 = tk.Label(self.root)                           # "Sentence" represent on teh interface
-        self.T3.place(x = 10,y = 760)
+        self.T3.place(x = 780,y = 150)
         self.T3.config(text ="Sentence :",font=("Courier",40,"bold"))
 
         self.T4 = tk.Label(self.root)                           # Suggestions
-        self.T4.place(x = 250,y = 820)
+        self.T4.place(x = 780,y = 200)
         self.T4.config(text = "Suggestions",fg="red",font = ("Courier",40,"bold"))
 
 

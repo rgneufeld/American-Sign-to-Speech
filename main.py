@@ -243,7 +243,7 @@ class Application:
 
     # Destroy the window
     def destructor(self):
-        print("Closing Application...")
+        print("Terminate the Application...")
         self.root.destroy()
         self.vs.release()
         cv2.destroyAllWindows()
@@ -251,6 +251,6 @@ class Application:
 
 # Exection of the program starts here
 
-print("Starting Application...")
+print("Starting the Application...")
 pba = Application()
 pba.root.mainloop()
